@@ -27,6 +27,11 @@ nodem-clean k --path D:\\projects\\test
 nodem-clean k -p D:\\projects\\test
 ```
 
+## 行为说明
+
+- 为避免跨目录误删，工具默认跳过符号链接（symlink）及其指向内容。
+- 为避免高风险误操作，工具不允许直接扫描根目录（例如 `/`、`C:\\`）。
+
 ## 开发
 
 ```sh
