@@ -10,6 +10,11 @@
   ],
   "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "bin": {
     "nodem-clean": "dist/bin/index.js"
   },
