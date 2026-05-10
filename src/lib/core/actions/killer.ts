@@ -24,7 +24,8 @@ export default async function killerAction(inputPath: string): Promise<void> {
   }
 
   for (const dir of foundDirs) {
-    searchSpinner.info(chalk.blue(`找到文件夹 ${dir.path} 大小为 ${dir.size} kb`));
+    const sizeInKb = (dir.size / 1024).toFixed(2);
+    searchSpinner.info(chalk.blue(`找到文件夹 ${dir.path} 大小为 ${sizeInKb} KB`));
   }
 
   const removeSpinner = ora().start("正在删除文件夹...... \n");
