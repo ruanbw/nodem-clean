@@ -4,30 +4,38 @@ import path from "node:path";
 export default async function dirSize(dirPath: string): Promise<number> {
   let totalSize = 0;
 
-  let children: string[];
-  try {
-    children = await readdir(dirPath);
-  } catch {
-    return 0;
-  }
+  const pendingDirs: string[] = [dirPath];
+  while (pendingDirs.length > 0) {
+    const currentDir = pendingDirs.pop();
+    if (!currentDir) {
+      continue;
+    }
 
-  for (const child of children) {
-    const childPath = path.join(dirPath, child);
-    let res;
+    let children: string[];
     try {
-      res = await lstat(childPath);
+      children = await readdir(currentDir);
     } catch {
       continue;
     }
 
-    if (res.isSymbolicLink()) {
-      continue;
-    }
+    for (const child of children) {
+      const childPath = path.join(currentDir, child);
+      let res;
+      try {
+        res = await lstat(childPath);
+      } catch {
+        continue;
+      }
 
-    if (res.isDirectory()) {
-      totalSize += await dirSize(childPath);
-    } else {
-      totalSize += res.size;
+      if (res.isSymbolicLink()) {
+        continue;
+      }
+
+      if (res.isDirectory()) {
+        pendingDirs.push(childPath);
+      } else {
+        totalSize += res.size;
+      }
     }
   }
 
