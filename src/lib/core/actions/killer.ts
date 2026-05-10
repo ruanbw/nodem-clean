@@ -17,6 +17,15 @@ export default async function killerAction(inputPath: string): Promise<void> {
   }
 
   const removeSpinner = ora().start("正在删除文件夹...... \n");
-  await removeFileOrDir(foundDirs);
+  const removeErrors = await removeFileOrDir(foundDirs);
+
+  if (removeErrors.length > 0) {
+    removeSpinner.warn(`部分目录删除失败，失败数量: ${removeErrors.length}`);
+    for (const removeError of removeErrors) {
+      removeSpinner.info(chalk.yellow(`删除失败: ${removeError.path}`));
+    }
+    return;
+  }
+
   removeSpinner.succeed("删除完成");
 }

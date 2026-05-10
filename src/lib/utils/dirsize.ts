@@ -13,7 +13,12 @@ export default async function dirSize(dirPath: string): Promise<number> {
 
   for (const child of children) {
     const childPath = path.join(dirPath, child);
-    const res = await lstat(childPath);
+    let res;
+    try {
+      res = await lstat(childPath);
+    } catch {
+      continue;
+    }
 
     if (res.isSymbolicLink()) {
       continue;

@@ -8,11 +8,21 @@ export default async function searchDir(
   searchName: string,
   foundDirs: FoundDir[]
 ): Promise<void> {
-  const children = await readdir(dirPath);
+  let children: string[];
+  try {
+    children = await readdir(dirPath);
+  } catch {
+    return;
+  }
 
   for (const child of children) {
     const childPath = path.join(dirPath, child);
-    const res = await lstat(childPath);
+    let res;
+    try {
+      res = await lstat(childPath);
+    } catch {
+      continue;
+    }
 
     if (res.isSymbolicLink()) {
       continue;
