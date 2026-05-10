@@ -27,3 +27,10 @@ nodem-clean k --path D:\\projects\\test
 nodem-clean k -p D:\\projects\\test
 ```
 
+## 开发
+
+```sh
+pnpm install
+pnpm run typecheck
+pnpm run build
+```

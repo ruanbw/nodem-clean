@@ -1,8 +1,10 @@
-#! /usr/bin/env node
+#!/usr/bin/env node
 
-const { Command } = require("commander");
+import { Command } from "commander";
+import { killerAction } from "../lib";
+
 const program = new Command();
-const { killerAction } = require("../lib/index");
+
 program
   .name("clearctl")
   .description("删除指定目录下的所有 node_modules 文件夹")
@@ -13,8 +15,8 @@ program
   .alias("k")
   .description("删除指定目录下的所有 node_modules 文件夹")
   .option("-p, --path <path>", "指定目录", ".")
-  .action((args, options) => {
-    killerAction(args.path);
+  .action(async (args: { path: string }) => {
+    await killerAction(args.path);
   });
 
 program.parse();

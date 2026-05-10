@@ -8,18 +8,25 @@
     "nodem-clean",
     "clear"
   ],
-  "main": "index.js",
+  "main": "dist/lib/index.js",
+  "types": "dist/lib/index.d.ts",
   "bin": {
-    "nodem-clean": "bin/index.js"
-  },
-  "directories": {
-    "lib": "lib"
+    "nodem-clean": "dist/bin/index.js"
   },
   "author": "ruanbw",
   "license": "MIT",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prepublishOnly": "npm run build"
+  },
   "dependencies": {
     "chalk": "^5.6.2",
     "commander": "^14.0.3",
     "ora": "^9.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.17",
+    "typescript": "^5.8.3"
   }
 }
