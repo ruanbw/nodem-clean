@@ -1,32 +1,16 @@
 import { lstat, readdir } from "node:fs/promises";
 import path from "node:path";
 import dirSize from "./dirsize";
+import mapLimit from "./maplimit";
 import type { FoundDir } from "../types";
 
 const SEARCH_CONCURRENCY = 8;
 
-async function mapLimit<T>(items: T[], limit: number, worker: (item: T) => Promise<void>): Promise<void> {
-  let index = 0;
-
-  async function run(): Promise<void> {
-    while (true) {
-      const currentIndex = index;
-      index += 1;
-      if (currentIndex >= items.length) {
-        return;
-      }
-      await worker(items[currentIndex]);
-    }
-  }
-
-  const workerCount = Math.min(limit, items.length);
-  await Promise.all(Array.from({ length: workerCount }, () => run()));
-}
-
 export default async function searchDir(
   dirPath: string,
   searchName: string,
-  foundDirs: FoundDir[]
+  foundDirs: FoundDir[],
+  withSize = true
 ): Promise<void> {
   let children: string[];
   try {
@@ -50,10 +34,10 @@ export default async function searchDir(
 
     if (res.isDirectory() && !child.startsWith(".")) {
       if (child === searchName) {
-        const size = await dirSize(childPath);
+        const size = withSize ? await dirSize(childPath) : 0;
         foundDirs.push({ path: childPath, size });
       } else {
-        await searchDir(childPath, searchName, foundDirs);
+        await searchDir(childPath, searchName, foundDirs, withSize);
       }
     }
   });
