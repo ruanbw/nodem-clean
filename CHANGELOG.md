@@ -1,3 +1,23 @@
+## [1.2.0] - 2026-05-10
+
+### Added
+- `--dry-run` 安全预览模式：只列出将被删除的目录，不实际删除。
+- `--size` 按需大小统计：默认跳过以加快扫描速度，加 `--size` 时计算并显示各目录大小及总量。
+- `formatSize` 工具：自动适配 B/KB/MB/GB/TB，展示更直观。
+- 公共并发控制工具 `mapLimit`：搜索与删除复用同一并发逻辑。
+
+### Changed
+- 删除操作从串行改为并行（并发度 8），多目录删除显著提速。
+- 扫描结果展示改为列表输出，包含总量汇总行。
+- CLI 入口名称从 `clearctl` 修正为 `nodem-clean`，版本号改为从 `package.json` 动态读取。
+- 启用 `resolveJsonModule` 支持 JSON 导入。
+
+### Removed
+- 删除前的 `fileExists` 冗余检查：`rm({ force: true })` 在路径不存在时本就不会报错。
+
+### Fixed
+- 删除失败时输出具体错误原因（error.message），便于排查。
+
 ## [1.1.0] - 2026-05-10
 
 ### Added
