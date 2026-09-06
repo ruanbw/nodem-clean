@@ -7,11 +7,11 @@ export default function formPath(inputPath: string): string {
   if (existsSync(normalizedPath)) {
     const stat = statSync(normalizedPath);
     if (!stat.isDirectory()) {
-      throw new Error(`路径:${normalizedPath}不是目录,请重新输入`);
+      throw new Error(`Path ${normalizedPath} is not a directory, please try again`);
     }
 
     return normalizedPath;
   }
 
-  throw new Error(`路径:${normalizedPath}不存在,请重新输入`);
+  throw new Error(`Path ${normalizedPath} does not exist, please try again`);
 }

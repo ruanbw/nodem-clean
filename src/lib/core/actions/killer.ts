@@ -21,7 +21,7 @@ export default async function killerAction(
   const rootPath = path.parse(newPath).root;
 
   if (newPath === rootPath) {
-    throw new Error(`禁止直接扫描根目录: ${newPath}`);
+    throw new Error(`Refusing to scan the root directory directly: ${newPath}`);
   }
 
   const withSize = options.size === true;
@@ -68,16 +68,16 @@ export default async function killerAction(
   const removeErrors = await removeFileOrDir(foundDirs);
 
   if (removeErrors.length > 0) {
-    removeSpinner.warn(`部分目录删除失败，失败数量: ${removeErrors.length}`);
+    removeSpinner.warn(`Some directories failed to delete, failed count: ${removeErrors.length}`);
     for (const removeError of removeErrors) {
       const message =
         removeError.error instanceof Error
           ? removeError.error.message
           : String(removeError.error);
-      console.log(chalk.yellow(`删除失败: ${removeError.path} —— ${message}`));
+      console.log(chalk.yellow(`Failed to delete: ${removeError.path} — ${message}`));
     }
     throw new Error(
-      `删除失败: ${removeErrors.length} 个 node_modules 未能删除，详见上方日志`
+      `Failed to delete: ${removeErrors.length} node_modules directories could not be removed, see logs above for details`
     );
   }
 

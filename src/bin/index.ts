@@ -22,8 +22,8 @@ program
     try {
       await killerAction(args.path, { dryRun: args.dryRun, size: args.size });
     } catch (error) {
-      const message = error instanceof Error ? error.message : "未知错误";
-      console.error(`执行失败: ${message}`);
+      const message = error instanceof Error ? error.message : "Unknown error";
+      console.error(`Execution failed: ${message}`);
       process.exitCode = 1;
     }
   });
