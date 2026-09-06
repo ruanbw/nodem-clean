@@ -1,6 +1,6 @@
 import { rm } from "node:fs/promises";
-import mapLimit from "./maplimit";
-import type { FoundDir } from "../types";
+import mapLimit from "./maplimit.js";
+import type { FoundDir } from "../types.js";
 
 const REMOVE_CONCURRENCY = 8;
 

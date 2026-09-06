@@ -1,3 +1,3 @@
-import killerAction from "./core/actions/killer";
+import killerAction from "./core/actions/killer.js";
 
 export { killerAction };

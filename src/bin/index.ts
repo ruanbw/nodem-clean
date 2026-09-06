@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import { Command } from "commander";
-import { killerAction } from "../lib";
-import pkg from "../../package.json";
+import { killerAction } from "../lib/index.js";
+import pkg from "../../package.json" with { type: "json" };
 
 const program = new Command();
 

@@ -1,11 +1,11 @@
 import chalk from "chalk";
 import ora from "ora";
 import path from "node:path";
-import formPath from "../../utils/formpath";
-import searchDir from "../../utils/searchdir";
-import removeFileOrDir from "../../utils/removefileordir";
-import formatSize from "../../utils/formatsize";
-import type { FoundDir } from "../../types";
+import formPath from "../../utils/formpath.js";
+import searchDir from "../../utils/searchdir.js";
+import removeFileOrDir from "../../utils/removefileordir.js";
+import formatSize from "../../utils/formatsize.js";
+import type { FoundDir } from "../../types.js";
 
 interface KillerOptions {
   dryRun?: boolean;

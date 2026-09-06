@@ -1,8 +1,8 @@
 import { lstat, readdir } from "node:fs/promises";
 import path from "node:path";
-import dirSize from "./dirsize";
-import mapLimit from "./maplimit";
-import type { FoundDir } from "../types";
+import dirSize from "./dirsize.js";
+import mapLimit from "./maplimit.js";
+import type { FoundDir } from "../types.js";
 
 const SEARCH_CONCURRENCY = 8;
 
