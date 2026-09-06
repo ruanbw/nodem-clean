@@ -1,7 +1,7 @@
-import { lstat, readdir } from "node:fs/promises";
+import { readdir } from "node:fs/promises";
 import path from "node:path";
 import dirSize from "./dirsize.js";
-import mapLimit, { MAP_LIMIT } from "./maplimit.js";
+import { MAP_LIMIT } from "./maplimit.js";
 import type { FoundDir } from "../types.js";
 
 export default async function searchDir(
@@ -10,33 +10,56 @@ export default async function searchDir(
   foundDirs: FoundDir[],
   withSize = true
 ): Promise<void> {
-  let children: string[];
-  try {
-    children = await readdir(dirPath);
-  } catch {
-    return;
-  }
+  // BFS work queue: `pending` grows as directories are discovered. Global
+  // concurrency is capped at MAP_LIMIT regardless of tree depth, unlike
+  // per-level mapLimit fan-out which grows as limit^depth.
+  const pending: string[] = [dirPath];
+  let cursor = 0;
+  let inflight = 0;
 
-  await mapLimit(children, MAP_LIMIT, async (child) => {
-    const childPath = path.join(dirPath, child);
-    let res;
-    try {
-      res = await lstat(childPath);
-    } catch {
-      return;
-    }
-
-    if (res.isSymbolicLink()) {
-      return;
-    }
-
-    if (res.isDirectory() && !child.startsWith(".")) {
-      if (child === searchName) {
-        const size = withSize ? await dirSize(childPath) : 0;
-        foundDirs.push({ path: childPath, size });
-      } else {
-        await searchDir(childPath, searchName, foundDirs, withSize);
+  return new Promise<void>((resolve) => {
+    const scanDir = async (dir: string): Promise<void> => {
+      let entries;
+      try {
+        entries = await readdir(dir, { withFileTypes: true });
+      } catch {
+        return;
       }
-    }
+
+      for (const entry of entries) {
+        if (entry.isSymbolicLink() || !entry.isDirectory() || entry.name.startsWith(".")) {
+          continue;
+        }
+
+        const childPath = path.join(dir, entry.name);
+        if (entry.name === searchName) {
+          const size = withSize ? await dirSize(childPath) : 0;
+          foundDirs.push({ path: childPath, size });
+        } else {
+          pending.push(childPath);
+        }
+      }
+    };
+
+    const drain = (): void => {
+      while (inflight < MAP_LIMIT && cursor < pending.length) {
+        const dir = pending[cursor];
+        cursor += 1;
+        inflight += 1;
+        void scanDir(dir).then(() => {
+          inflight -= 1;
+          drain();
+          if (inflight === 0 && cursor >= pending.length) {
+            resolve();
+          }
+        });
+      }
+
+      if (inflight === 0 && cursor >= pending.length) {
+        resolve();
+      }
+    };
+
+    drain();
   });
 }

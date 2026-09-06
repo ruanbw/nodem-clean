@@ -33,6 +33,7 @@ export default async function killerAction(
     return;
   }
 
+  foundDirs.sort((a, b) => a.path.localeCompare(b.path));
   const totalSize = foundDirs.reduce((sum, dir) => sum + dir.size, 0);
   const totalSizeText = withSize ? `, total ${formatSize(totalSize)}` : "";
 

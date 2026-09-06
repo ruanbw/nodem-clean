@@ -1,43 +1,37 @@
+import type { Dirent } from "node:fs";
 import { lstat, readdir } from "node:fs/promises";
 import path from "node:path";
+import mapLimit, { MAP_LIMIT } from "./maplimit.js";
 
 export default async function dirSize(dirPath: string): Promise<number> {
   let totalSize = 0;
-
   const pendingDirs: string[] = [dirPath];
+
   while (pendingDirs.length > 0) {
     const currentDir = pendingDirs.pop();
     if (!currentDir) {
       continue;
     }
 
-    let children: string[];
+    let entries;
     try {
-      children = await readdir(currentDir);
+      entries = await readdir(currentDir, { withFileTypes: true });
     } catch {
       continue;
     }
+    const childPathFor = (entry: Dirent): string => path.join(currentDir, entry.name);
+    const files = entries.filter((e) => !e.isSymbolicLink() && !e.isDirectory()).map(childPathFor);
+    const subDirs = entries.filter((e) => !e.isSymbolicLink() && e.isDirectory()).map(childPathFor);
+    pendingDirs.push(...subDirs);
 
-    for (const child of children) {
-      const childPath = path.join(currentDir, child);
-      let res;
+    await mapLimit(files, MAP_LIMIT, async (filePath) => {
       try {
-        res = await lstat(childPath);
+        const stat = await lstat(filePath);
+        totalSize += stat.size;
       } catch {
-        continue;
+        // File vanished between readdir and lstat; skip it.
       }
-
-      if (res.isSymbolicLink()) {
-        continue;
-      }
-
-      if (res.isDirectory()) {
-        pendingDirs.push(childPath);
-      } else {
-        totalSize += res.size;
-      }
-    }
+    });
   }
-
   return totalSize;
 }
