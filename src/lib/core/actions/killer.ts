@@ -76,7 +76,9 @@ export default async function killerAction(
           : String(removeError.error);
       console.log(chalk.yellow(`删除失败: ${removeError.path} —— ${message}`));
     }
-    return;
+    throw new Error(
+      `删除失败: ${removeErrors.length} 个 node_modules 未能删除，详见上方日志`
+    );
   }
 
   if (withSize) {
