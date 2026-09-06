@@ -34,33 +34,18 @@ export default async function killerAction(
   }
 
   const totalSize = foundDirs.reduce((sum, dir) => sum + dir.size, 0);
+  const totalSizeText = withSize ? `，合计 ${formatSize(totalSize)}` : "";
 
-  if (withSize) {
-    searchSpinner.succeed(
-      `共找到 ${foundDirs.length} 个 node_modules，合计 ${formatSize(totalSize)}`
-    );
-  } else {
-    searchSpinner.succeed(`共找到 ${foundDirs.length} 个 node_modules`);
-  }
+  searchSpinner.succeed(`共找到 ${foundDirs.length} 个 node_modules${totalSizeText}`);
 
   for (const dir of foundDirs) {
-    if (withSize && dir.size > 0) {
-      console.log(chalk.blue(`  ${dir.path}  (${formatSize(dir.size)})`));
-    } else {
-      console.log(chalk.blue(`  ${dir.path}`));
-    }
+    const sizeText = withSize && dir.size > 0 ? `  (${formatSize(dir.size)})` : "";
+    console.log(chalk.blue(`  ${dir.path}${sizeText}`));
   }
 
   if (options.dryRun) {
-    if (withSize) {
-      console.log(
-        chalk.yellow(
-          `\n[dry-run] 未删除任何文件。将释放约 ${formatSize(totalSize)}`
-        )
-      );
-    } else {
-      console.log(chalk.yellow("\n[dry-run] 未删除任何文件。"));
-    }
+    const dryRunText = withSize ? `。将释放约 ${formatSize(totalSize)}` : "。";
+    console.log(chalk.yellow(`\n[dry-run] 未删除任何文件${dryRunText}`));
     return;
   }
 
@@ -81,9 +66,6 @@ export default async function killerAction(
     );
   }
 
-  if (withSize) {
-    removeSpinner.succeed(`删除完成，已释放约 ${formatSize(totalSize)}`);
-  } else {
-    removeSpinner.succeed("删除完成");
-  }
+  const releasedText = withSize ? `，已释放约 ${formatSize(totalSize)}` : "";
+  removeSpinner.succeed(`删除完成${releasedText}`);
 }

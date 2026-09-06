@@ -1,3 +1,5 @@
+export const MAP_LIMIT = 8;
+
 export default async function mapLimit<T>(
   items: T[],
   limit: number,

@@ -2,7 +2,7 @@ import { existsSync, statSync } from "node:fs";
 import path from "node:path";
 
 export default function formPath(inputPath: string): string {
-  const normalizedPath = inputPath === "." ? process.cwd() : path.resolve(inputPath);
+  const normalizedPath = path.resolve(inputPath);
 
   if (existsSync(normalizedPath)) {
     const stat = statSync(normalizedPath);

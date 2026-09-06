@@ -1,10 +1,8 @@
 import { lstat, readdir } from "node:fs/promises";
 import path from "node:path";
 import dirSize from "./dirsize.js";
-import mapLimit from "./maplimit.js";
+import mapLimit, { MAP_LIMIT } from "./maplimit.js";
 import type { FoundDir } from "../types.js";
-
-const SEARCH_CONCURRENCY = 8;
 
 export default async function searchDir(
   dirPath: string,
@@ -19,7 +17,7 @@ export default async function searchDir(
     return;
   }
 
-  await mapLimit(children, SEARCH_CONCURRENCY, async (child) => {
+  await mapLimit(children, MAP_LIMIT, async (child) => {
     const childPath = path.join(dirPath, child);
     let res;
     try {

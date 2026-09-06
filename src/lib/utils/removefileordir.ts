@@ -1,8 +1,6 @@
 import { rm } from "node:fs/promises";
-import mapLimit from "./maplimit.js";
+import mapLimit, { MAP_LIMIT } from "./maplimit.js";
 import type { FoundDir } from "../types.js";
-
-const REMOVE_CONCURRENCY = 8;
 
 export interface RemoveError {
   path: string;
@@ -14,7 +12,7 @@ export default async function removeFileOrDir(
 ): Promise<RemoveError[]> {
   const errors: RemoveError[] = [];
 
-  await mapLimit(dirs, REMOVE_CONCURRENCY, async (dir) => {
+  await mapLimit(dirs, MAP_LIMIT, async (dir) => {
     try {
       await rm(dir.path, { recursive: true, force: true });
     } catch (error) {
