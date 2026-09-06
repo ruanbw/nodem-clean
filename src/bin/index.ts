@@ -8,16 +8,16 @@ const program = new Command();
 
 program
   .name("nodem-clean")
-  .description("删除指定目录下的所有 node_modules 文件夹")
+  .description("CLI for finding and cleaning up node_modules directories")
   .version(pkg.version);
 
 program
   .command("killer")
   .alias("k")
-  .description("删除指定目录下的所有 node_modules 文件夹")
-  .option("-p, --path <path>", "指定目录", ".")
-  .option("--dry-run", "只列出将被删除的目录，不实际删除", false)
-  .option("--size", "计算并显示各目录大小（默认跳过以加快速度）", false)
+  .description("Delete all node_modules folders under a specified directory")
+  .option("-p, --path <path>", "Target directory", ".")
+  .option("--dry-run", "List directories that would be deleted without deleting", false)
+  .option("--size", "Calculate and show each directory's size (skipped by default for speed)", false)
   .action(async (args: { path: string; dryRun: boolean; size: boolean }) => {
     try {
       await killerAction(args.path, { dryRun: args.dryRun, size: args.size });

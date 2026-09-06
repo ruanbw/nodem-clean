@@ -1,7 +1,7 @@
 {
   "name": "nodem-clean",
   "version": "1.2.1",
-  "description": "删除指定目录下的所有 node_modules 文件夹",
+  "description": "Delete all node_modules folders under a specified directory",
   "keywords": [
     "node_modules",
     "clean",

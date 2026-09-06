@@ -25,18 +25,18 @@ export default async function killerAction(
   }
 
   const withSize = options.size === true;
-  const searchSpinner = ora().start("正在查找 node_modules 文件夹......\n");
+  const searchSpinner = ora().start("Searching for node_modules directories...\n");
   await searchDir(newPath, "node_modules", foundDirs, withSize);
 
   if (foundDirs.length === 0) {
-    searchSpinner.succeed("未找到 node_modules 文件夹");
+    searchSpinner.succeed("No node_modules directories found");
     return;
   }
 
   const totalSize = foundDirs.reduce((sum, dir) => sum + dir.size, 0);
-  const totalSizeText = withSize ? `，合计 ${formatSize(totalSize)}` : "";
+  const totalSizeText = withSize ? `, total ${formatSize(totalSize)}` : "";
 
-  searchSpinner.succeed(`共找到 ${foundDirs.length} 个 node_modules${totalSizeText}`);
+  searchSpinner.succeed(`Found ${foundDirs.length} node_modules director${foundDirs.length === 1 ? "y" : "ies"}${totalSizeText}`);
 
   for (const dir of foundDirs) {
     const sizeText = withSize && dir.size > 0 ? `  (${formatSize(dir.size)})` : "";
@@ -44,12 +44,12 @@ export default async function killerAction(
   }
 
   if (options.dryRun) {
-    const dryRunText = withSize ? `。将释放约 ${formatSize(totalSize)}` : "。";
-    console.log(chalk.yellow(`\n[dry-run] 未删除任何文件${dryRunText}`));
+    const dryRunText = withSize ? `. Would free about ${formatSize(totalSize)}` : ".";
+    console.log(chalk.yellow(`\n[dry-run] No files were deleted${dryRunText}`));
     return;
   }
 
-  const removeSpinner = ora().start("正在删除文件夹......\n");
+  const removeSpinner = ora().start("Deleting directories...\n");
   const removeErrors = await removeFileOrDir(foundDirs);
 
   if (removeErrors.length > 0) {
@@ -66,6 +66,6 @@ export default async function killerAction(
     );
   }
 
-  const releasedText = withSize ? `，已释放约 ${formatSize(totalSize)}` : "";
-  removeSpinner.succeed(`删除完成${releasedText}`);
+  const releasedText = withSize ? `, freed about ${formatSize(totalSize)}` : "";
+  removeSpinner.succeed(`Deletion complete${releasedText}`);
 }
