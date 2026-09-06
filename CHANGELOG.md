@@ -1,8 +1,16 @@
-## [Unreleased]
+## [1.3.0] - 2026-09-07
+
+### Added
+- README 支持中英双语：新增 `README.zh-CN.md`，补充 `--dry-run` / `--size` 说明并修正路径示例。
+
+### Changed
+- 依赖升级并迁移为 ESM：`chalk 6` / `commander 15` / `ora 9.4.1` / `typescript 5.9.3`。
+- 用户可见文案（CLI 帮助文本、spinner 输出、错误提示）全部改为英文，主命令与 killer 子命令描述区分。
 
 ### Fixed
 - 修复传入符号链接指向的目录时报「不是目录」的问题：路径校验改为跟随符号链接（`statSync`）；扫描阶段跳过符号链接的安全行为不变。
 - 修复部分目录删除失败时进程仍以退出码 0 结束的问题：现在会抛出错误并以非 0 退出码结束，便于脚本/CI 感知失败。
+- 搜索并发修复为全局有界：`searchDir` 改为 BFS 全局限并发（8），避免并发随树深呈 8^d 爆发；`readdir withFileTypes` 消除搜索阶段 lstat；`dirSize` 文件 lstat 批量并行并修复 `await` 复合赋值导致的丢失更新；`formPath` 单次 `statSync` 消除 TOCTOU；输出按路径排序。
 
 ## [1.2.1] - 2026-05-10
 
